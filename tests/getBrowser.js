@@ -7,13 +7,7 @@ const getBrowser = async () => {
     // eslint-disable-next-line import/no-unresolved
     const puppeteer = require('puppeteer');
     const browser = await puppeteer.launch({
-      args: [
-        '--disable-gpu',
-        '--disable-dev-shm-usage',
-        '--no-first-run',
-        '--no-zygote',
-        '--no-sandbox',
-      ],
+      args: ['--disable-gpu', '--disable-dev-shm-usage', '--no-first-run', '--no-zygote', '--no-sandbox'],
     });
     return browser;
   } catch (error) {
@@ -27,13 +21,7 @@ const getBrowser = async () => {
     const { executablePath } = findChromePath;
     const browser = await puppeteer.launch({
       executablePath,
-      args: [
-        '--disable-gpu',
-        '--disable-dev-shm-usage',
-        '--no-first-run',
-        '--no-zygote',
-        '--no-sandbox',
-      ],
+      args: ['--disable-gpu', '--disable-dev-shm-usage', '--no-first-run', '--no-zygote', '--no-sandbox'],
     });
     return browser;
   } catch (error) {

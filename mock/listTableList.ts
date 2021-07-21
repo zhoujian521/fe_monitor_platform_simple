@@ -13,10 +13,7 @@ const genList = (current: number, pageSize: number) => {
       key: index,
       disabled: i % 6 === 0,
       href: 'https://ant.design',
-      avatar: [
-        'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
-        'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
-      ][i % 2],
+      avatar: ['https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png', 'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png'][i % 2],
       name: `TradeCode ${index}`,
       owner: '曲丽丽',
       desc: '这是一段描述',
@@ -45,10 +42,7 @@ function getRule(req: Request, res: Response, u: string) {
       filter: any;
     };
 
-  let dataSource = [...tableListDataSource].slice(
-    ((current as number) - 1) * (pageSize as number),
-    (current as number) * (pageSize as number),
-  );
+  let dataSource = [...tableListDataSource].slice(((current as number) - 1) * (pageSize as number), (current as number) * (pageSize as number));
   if (params.sorter) {
     const sorter = JSON.parse(params.sorter);
     dataSource = dataSource.sort((prev, next) => {
@@ -124,10 +118,7 @@ function postRule(req: Request, res: Response, u: string, b: Request) {
         const newRule: API.RuleListItem = {
           key: tableListDataSource.length,
           href: 'https://ant.design',
-          avatar: [
-            'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
-            'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
-          ][i % 2],
+          avatar: ['https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png', 'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png'][i % 2],
           name,
           owner: '曲丽丽',
           desc,

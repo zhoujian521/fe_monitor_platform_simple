@@ -1,41 +1,46 @@
-// eslint-disable-next-line
-const NodeEnvironment = require('jest-environment-node');
-const getBrowser = require('./getBrowser');
+/* eslint-disable eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable eslint-comments/no-unlimited-disable */
+const { spawn } = require('child_process');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { kill } = require('cross-port-killer');
 
-class PuppeteerEnvironment extends NodeEnvironment {
-  // Jest is not available here, so we have to reverse engineer
-  // the setTimeout function, see https://github.com/facebook/jest/blob/v23.1.0/packages/jest-runtime/src/index.js#L823
-  setTimeout(timeout) {
-    if (this.global.jasmine) {
-      // eslint-disable-next-line no-underscore-dangle
-      this.global.jasmine.DEFAULT_TIMEOUT_INTERVAL = timeout;
-    } else {
-      this.global[Symbol.for('TEST_TIMEOUT_SYMBOL')] = timeout;
-    }
+const env = Object.create(process.env);
+env.BROWSER = 'none';
+env.TEST = true;
+env.UMI_UI = 'none';
+env.PROGRESS = 'none';
+// flag to prevent multiple test
+let once = false;
+
+const startServer = spawn(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['run', 'serve'], {
+  env,
+});
+
+startServer.stderr.on('data', (data) => {
+  // eslint-disable-next-line
+  console.log(data.toString());
+});
+
+startServer.on('exit', () => {
+  kill(process.env.PORT || 8000);
+});
+
+console.log('Starting development server for e2e tests...');
+startServer.stdout.on('data', (data) => {
+  console.log(data.toString());
+  // hack code , wait umi
+  if (!once && data.toString().indexOf('Serving your umi project!') >= 0) {
+    // eslint-disable-next-line
+    once = true;
+    console.log('Development server is started, ready to run tests.');
+    const testCmd = spawn(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['test', '--', '--maxWorkers=1', '--runInBand'], {
+      stdio: 'inherit',
+    });
+    testCmd.on('exit', (code) => {
+      console.log(code);
+      startServer.kill();
+      process.exit(code);
+    });
   }
-
-  async setup() {
-    const browser = await getBrowser();
-    const page = await browser.newPage();
-    this.global.browser = browser;
-    this.global.page = page;
-  }
-
-  async teardown() {
-    const { page, browser } = this.global;
-
-    if (page) {
-      await page.close();
-    }
-
-    if (browser) {
-      await browser.disconnect();
-    }
-
-    if (browser) {
-      await browser.close();
-    }
-  }
-}
-
-module.exports = PuppeteerEnvironment;
+});

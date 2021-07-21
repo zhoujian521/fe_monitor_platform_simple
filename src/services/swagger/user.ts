@@ -12,10 +12,7 @@ export async function createUser(body: API.User, options?: { [key: string]: any 
 }
 
 /** Creates list of users with given input array POST /user/createWithArray */
-export async function createUsersWithArrayInput(
-  body: API.User[],
-  options?: { [key: string]: any },
-) {
+export async function createUsersWithArrayInput(body: API.User[], options?: { [key: string]: any }) {
   return request<any>('/user/createWithArray', {
     method: 'POST',
     data: body,
